@@ -15,6 +15,7 @@ import {get} from "svelte/store";
 import {localStreamStore, LocalStreamStoreValue, obtainedMediaConstraintStore} from "../Stores/MediaStore";
 import {screenSharingLocalStreamStore} from "../Stores/ScreenSharingStore";
 import {discussionManager} from "./DiscussionManager";
+import {newChatMessageStore} from "../Stores/ChatStore";
 
 export interface UserSimplePeerInterface{
     userId: number;
@@ -167,6 +168,7 @@ export class SimplePeer {
         const peer = new VideoPeer(user, user.initiator ? user.initiator : false, name, this.Connection, localStream);
 
         //permit to send message
+        //todo remove
         mediaManager.addSendMessageCallback(user.userId,(message: string) => {
             peer.write(new Buffer(JSON.stringify({type: MESSAGE_TYPE_MESSAGE, name: this.myName.toUpperCase(), userId: this.userId, message: message})));
         });
