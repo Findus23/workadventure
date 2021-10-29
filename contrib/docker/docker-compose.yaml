@@ -1,0 +1,51 @@
+version: "3.3"
+services:
+  front:
+    build:
+      context: ../..
+      dockerfile: front/Dockerfile
+    #image: thecodingmachine/workadventure-front:master
+    environment:
+      DEBUG_MODE: "$DEBUG_MODE"
+      JITSI_URL: $JITSI_URL
+      JITSI_PRIVATE_MODE: "$JITSI_PRIVATE_MODE"
+      PUSHER_URL: //pusher.${DOMAIN}
+      STUN_SERVER: "${STUN_SERVER}"
+      TURN_SERVER: "${TURN_SERVER}"
+      TURN_USER: "${TURN_USER}"
+      TURN_PASSWORD: "${TURN_PASSWORD}"
+      START_ROOM_URL: "${START_ROOM_URL}"
+      ADMIN_URL: "//workadventu.re"
+    ports:
+      - "127.0.0.1:15680:80"
+    restart: unless-stopped
+
+  pusher:
+    build:
+      context: ../..
+      dockerfile: pusher/Dockerfile
+    #image: thecodingmachine/workadventure-pusher:master
+    command: yarn run runprod
+    environment:
+      SECRET_JITSI_KEY: "$SECRET_JITSI_KEY"
+      SECRET_KEY: yourSecretKey
+      API_URL: back:50051
+      JITSI_URL: $JITSI_URL
+      JITSI_ISS: $JITSI_ISS
+    ports:
+      - "127.0.0.1:15688:8080"
+    restart: unless-stopped
+
+  back:
+    build:
+      context: ../..
+      dockerfile: back/Dockerfile
+    #image: thecodingmachine/workadventure-back:master
+    command: yarn run runprod
+    environment:
+      SECRET_JITSI_KEY: "$SECRET_JITSI_KEY"
+      ADMIN_API_TOKEN: "$ADMIN_API_TOKEN"
+      ADMIN_API_URL: "$ADMIN_API_URL"
+      JITSI_URL: $JITSI_URL
+      JITSI_ISS: $JITSI_ISS
+    restart: unless-stopped
